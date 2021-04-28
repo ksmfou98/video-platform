@@ -38,6 +38,16 @@ router.post("/uploadfiles", (req, res) => {
 router.post("/thumbnail", (req, res) => {
   // 썸네일 생성하고 비디오 러닝타임도 가져오기
 
+  let filePath = "";
+  let fileDuration = "";
+  // 비디오 정보 가져오기
+  ffmpeg.ffprobe(req.body.url, function (err, metadata) {
+    console.dir(metadata);
+    console.log(metadata.format.duration);
+    fileDuration = metadata.format.duration;
+  });
+
+  // 썸네일 생성
   ffmpeg(req.body.url)
     .on("filenames", function (filenames) {
       console.log("Will generate " + filenames.join(", "));
@@ -50,7 +60,6 @@ router.post("/thumbnail", (req, res) => {
       return res.json({
         success: true,
         url: filePath,
-        fileName: filenames,
         fileDuration: fileDuration,
       });
     })
