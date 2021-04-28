@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Typography, Button, Form, message, Input, Icon } from "antd";
 import Dropzone from "react-dropzone";
 import Axios from "axios";
+import { useSelector } from "react-redux";
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -18,7 +19,8 @@ const CategoryOptions = [
   { value: 3, label: "Pets & Animals" },
 ];
 
-const VideoUploadPage = () => {
+const VideoUploadPage = (props) => {
+  const user = useSelector((state) => state.user);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -82,13 +84,39 @@ const VideoUploadPage = () => {
     });
   };
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    const variables = {
+      writer: user.userData._id,
+      title,
+      description,
+      privacy: Private,
+      filePath: FilePath,
+      category: Category,
+      duration: Duration,
+      thumbnail: ThumbnailPath,
+    };
+
+    Axios.post("/api/video/uploadVideo", variables).then((response) => {
+      if (response.data.success) {
+        message.success("성공적으로 업로드를 했습니다.");  //antd 디자인 성공 메세지 UI
+        setTimeout(() => {
+          props.history.push("/");
+        });
+      } else {
+        alert("비디오 업로드에 실패 했습니다.");
+      }
+    });
+  };
+
   return (
     <div style={{ maxWidth: "700px", margin: "2rem auto" }}>
       <div style={{ textAlign: "center", marginBottom: "2rem" }}>
         <Title level={2}>Upload Video</Title>
       </div>
 
-      <Form onSubmit>
+      <Form onSubmit={onSubmit}>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           {/* Drop zone */}
 
@@ -154,7 +182,7 @@ const VideoUploadPage = () => {
         <br />
         <br />
 
-        <Button type="primary" size="large" onClick>
+        <Button type="primary" size="large" onClick={onSubmit}>
           Submit
         </Button>
       </Form>
