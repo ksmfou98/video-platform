@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const ffmpeg = require("fluent-ffmpeg");
-const { Video } = require("../models/Video")
+const { Video } = require("../models/Video");
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -36,15 +36,25 @@ router.post("/uploadfiles", (req, res) => {
   });
 });
 
-router.post('/uploadVideo', (req, res) =>{
+router.post("/uploadVideo", (req, res) => {
   // 비디오 정보들을 저장한다.
-  const video = new Video(req.body)
+  const video = new Video(req.body);
 
-  video.save((err, doc) =>{
-    if (err) return res.json({ success: false, err})
-    return res.status(200).json({success: true})
-  })
-})
+  video.save((err, doc) => {
+    if (err) return res.json({ success: false, err });
+    return res.status(200).json({ success: true });
+  });
+});
+
+router.get("/getVideos", (req, res) => {
+  // 비디오를 DB에서 가져와서 클라이언트에 보낸다 .
+  Video.find()
+    .populate("writer") // Video 모델에 writer 부분의 Schema.Types.ObjectId 이거를 이용해 ref에있는 user정보를 다 가져올 때 사용
+    .exec((err, videos) => {
+      if (err) return res.status(400).send(err);
+      return res.status(200).json({ success: true, videos });
+    });
+});
 
 router.post("/thumbnail", (req, res) => {
   // 썸네일 생성하고 비디오 러닝타임도 가져오기
@@ -85,7 +95,5 @@ router.post("/thumbnail", (req, res) => {
       filename: "thumbnail-%b.png",
     });
 });
-
-
 
 module.exports = router;
