@@ -4,7 +4,6 @@ import Axios from "axios";
 import SideVideo from "./Sections/SideVideo";
 import Subscribe from "./Sections/Subscribe";
 
-
 const VideoDetailPage = ({ match }) => {
   const videoId = match.params.videoId;
   const variable = { videoId: videoId };
@@ -14,7 +13,7 @@ const VideoDetailPage = ({ match }) => {
   useEffect(() => {
     Axios.post("/api/video/getVideoDetail", variable).then((response) => {
       if (response.data.success) {
-          console.log(response.data.videoDetail)
+        console.log(response.data.videoDetail);
         setVideoDetail(response.data.videoDetail);
       } else {
         alert("비디오 정보를 가져오길 실패했습니다.");
@@ -33,7 +32,14 @@ const VideoDetailPage = ({ match }) => {
               controls
             />
 
-            <List.Item actions = {[<Subscribe userTo={VideoDetail.writer._id} />]}>
+            <List.Item
+              actions={[
+                <Subscribe
+                  userTo={VideoDetail.writer._id}
+                  userFrom={localStorage.getItem("userId")}
+                />,
+              ]}
+            >
               <List.Item.Meta
                 avatar={<Avatar src={VideoDetail.writer.image} />}
                 title={VideoDetail.writer.name}
