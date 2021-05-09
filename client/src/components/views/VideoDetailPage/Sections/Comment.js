@@ -1,6 +1,7 @@
 import Axios from "axios";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import ReplyComment from "./ReplyComment";
 import SingleComment from "./SingleComment";
 
 const Comment = ({ postId, commentLists, refreshFunction }) => {
@@ -31,7 +32,6 @@ const Comment = ({ postId, commentLists, refreshFunction }) => {
         alert("코맨트를 저장하지 못했습니다.");
       }
     });
-    
   };
 
   return (
@@ -45,14 +45,26 @@ const Comment = ({ postId, commentLists, refreshFunction }) => {
         commentLists.map(
           (comment, index) =>
             !comment.responseTo && (
-              <SingleComment
-                comment={comment}
-                postId={postId}
-                writer={user.userData._id}
-                responseTo={comment._id}
-                refreshFunction={refreshFunction}
-                key={index}
-              />
+              <>
+                <SingleComment
+                  comment={comment}
+                  postId={postId}
+                  writer={user.userData._id}
+                  responseTo={comment._id}
+                  refreshFunction={refreshFunction}
+                  key={index}
+                />
+
+                {/* <ReplyComment
+                  parentCommentId={comment._id}
+                  comment={comment}
+                  postId={postId}
+                  writer={user.userData._id}
+                  responseTo={comment._id}
+                  refreshFunction={refreshFunction}
+                  commentLists={commentLists}
+                /> */}
+              </>
             )
         )}
 

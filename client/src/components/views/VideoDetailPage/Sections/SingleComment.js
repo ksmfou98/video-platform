@@ -5,7 +5,7 @@ import Axios from "axios";
 const { TextArea } = Input;
 
 const SingleComment = ({
-  videoId,
+  postId,
   writer,
   comment,
   responseTo,
@@ -33,9 +33,10 @@ const SingleComment = ({
     let variables = {
       content: CommentValue,
       writer,
-      postId: videoId,
+      postId,
       responseTo,
     };
+    console.log(variables);
 
     Axios.post("/api/comment/saveComment", variables).then((response) => {
       if (response.data.success) {
@@ -52,7 +53,7 @@ const SingleComment = ({
       <Comment
         actions={actions}
         author={comment.writer.name}
-        avatar={<Avatar src={comment.writer.image}  />}
+        avatar={<Avatar src={comment.writer.image} />}
         content={comment.content}
       />
 
